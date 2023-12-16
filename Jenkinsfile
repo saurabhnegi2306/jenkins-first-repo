@@ -15,7 +15,7 @@ pipeline{
              sh "ls -ltr"
           }  
         }
-        stage("Image Push"){
+        stage("Image Push Ongoing"){
           steps {
             echo "Third Step . . . "  
             withCredentials([usernamePassword(credentialsId:"DockerHub", usernameVariable:"DockerHubUser", passwordVariable:"DockerHubPass")]){
