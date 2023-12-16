@@ -1,35 +1,35 @@
-pipeline {
-    agent any 
-    
-    stages{
-        stage("Clone Code"){
-            steps {
-                echo "Cloning the code"
-                git url:"https://github.com/LondheShubham153/django-notes-app.git", branch: "main"
-            }
+pipeline{
+    agent any
+    stages {
+        stage("Code Build"){
+          steps {
+             echo "First Step . . . " 
+             sh "pwd"
+             git branch: 'main', url: 'https://github.com/saurabhnegi2306/jenkins-first-repo/'
+          }   
         }
-        stage("Build"){
-            steps {
-                echo "Building the image"
-                sh "docker build -t my-note-app ."
-            }
+        stage("Image Build"){
+          steps {
+             echo "Second Step . . . " 
+             sh "docker build -t saurabh-app ."
+             sh "ls -ltr"
+          }  
         }
-        stage("Push to Docker Hub"){
-            steps {
-                echo "Pushing the image to docker hub"
-                withCredentials([usernamePassword(credentialsId:"dockerHub",passwordVariable:"dockerHubPass",usernameVariable:"dockerHubUser")]){
-                sh "docker tag my-note-app ${env.dockerHubUser}/my-note-app:latest"
-                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
-                sh "docker push ${env.dockerHubUser}/my-note-app:latest"
-                }
+        stage("Image Push"){
+          steps {
+            echo "Third Step . . . "  
+            withCredentials([usernamePassword(credentialsId:"DockerHub", usernameVariable:"DockerHubUser", passwordVariable:"DockerHubPass")]){
+              sh "docker tag saurabh-app ${env.DockerHubUser}/saurabh-app:latest  "
+              sh "docker login -u ${env.DockerHubUser} -p ${env.DockerHubPass}"
+              sh "docker push ${env.DockerHubUser}/saurabh-app:latest"
             }
+          }   
         }
         stage("Deploy"){
-            steps {
-                echo "Deploying the container"
-                sh "docker-compose down && docker-compose up -d"
-                
-            }
+          steps {
+            echo "Fourth Step . . . "
+              sh "docker-compose down && docker-compose up -d"
+          }   
         }
     }
 }
